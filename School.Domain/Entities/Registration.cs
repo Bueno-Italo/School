@@ -10,7 +10,7 @@ namespace School.Domain.Entities
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public int ClassID { get; set; }
+        public int ClassId { get; set; }
         public DateTime DateRegistration { get; set; }
         public DateTime DataExpiration {  get; set; }
         public bool Active { get; set; }

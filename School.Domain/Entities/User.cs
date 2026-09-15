@@ -14,6 +14,6 @@ namespace School.Domain.Entities
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public string Profile { get; set; }
-        public ICollection<Registration> Registration { get; set; }
+        public ICollection<Registration> Registrations { get; set; }
     }
 }
