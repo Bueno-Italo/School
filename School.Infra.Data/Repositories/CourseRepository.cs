@@ -1,8 +1,7 @@
 ﻿using School.Domain.Entities;
 using School.Domain.Interfaces;
 using School.Infra.Data.Context;
-using System.Data.Entity;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace School.Infra.Data.Repositories
 {
