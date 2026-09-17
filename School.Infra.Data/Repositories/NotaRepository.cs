@@ -1,5 +1,8 @@
-﻿using School.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using School.Domain.Entities;
 using School.Domain.Interfaces;
+using School.Infra.Data.Context;
+using School.Infra.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,29 +13,46 @@ namespace School.Infra.Data.Repositories
 {
     public class NotaRepository : INotaRepository
     {
-        public Task<Registration> AddAsync(Nota nota)
+        private readonly ApplicationDbContext _context;
+        public NotaRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public async Task<Nota> AddAsync(Nota nota)
+        {
+            _context.Nota.Add(nota);
+            await _context.SaveChangesAsync();
+            return nota;
+        }
+        public async Task<Nota> DeleteAsync(int id)
+        {
+            var nota = await _context.Nota.Where(x => x.Excluded == false && x.Id == id).FirstOrDefaultAsync();
+            if (nota == null)
+            {
+                return null;
+            }
+
+            nota.Excluded = true;
+            _context.Nota.Update(nota);
+            await _context.SaveChangesAsync();
+            return nota;
         }
 
-        public Task<Registration> DeleteAsync(int id)
+        public async Task<List<Nota>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Nota.Where(x => x.Excluded == false).ToListAsync();
         }
 
-        public Task<Registration> GetAllAsync()
+        public async Task<Nota> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Nota.Where(x => x.Excluded == false && x.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<Registration> GetByIdAsync(int id)
+        public async Task<Nota> UpdateAsync(Nota nota)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<Registration> UpdateAsync(Nota nota)
-        {
-            throw new NotImplementedException();
+            _context.Nota.Update(nota);
+            await _context.SaveChangesAsync();
+            return nota;
         }
     }
 }

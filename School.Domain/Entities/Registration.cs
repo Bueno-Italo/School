@@ -14,6 +14,7 @@ namespace School.Domain.Entities
         public DateTime DateRegistration { get; set; }
         public DateTime DataExpiration {  get; set; }
         public bool Active { get; set; }
+        public bool Excluded { get; set; }
         public ICollection<Nota> Notas { get; set; }
         public User User { get; set; }
         public Class Class { get; set; }

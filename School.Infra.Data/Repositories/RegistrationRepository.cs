@@ -1,5 +1,8 @@
-﻿using School.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using School.Domain.Entities;
 using School.Domain.Interfaces;
+using School.Infra.Data.Context;
+using School.Infra.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,29 +13,43 @@ namespace School.Infra.Data.Repositories
 {
     public class RegistrationRepository : IRegistrationRepository
     {
-        public Task<Registration> AddAsync(Registration registration)
+        private readonly ApplicationDbContext _context;
+        public RegistrationRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
-
-        public Task<Registration> DeleteAsync(int id)
+        public async Task<Registration> AddAsync(Registration registration)
         {
-            throw new NotImplementedException();
+            _context.Registration.Add(registration);
+            await _context.SaveChangesAsync();
+            return registration;
         }
-
-        public Task<Registration> GetAllAsync()
+        public async Task<Registration> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var registration = await _context.Registration.Where(x => x.Excluded == false && x.Id == id).FirstOrDefaultAsync();
+            if (registration == null)
+            {
+                return null;
+            }
+
+            registration.Excluded = true;
+            _context.Registration.Update(registration);
+            await _context.SaveChangesAsync();
+            return registration;
         }
-
-        public Task<Registration> GetByIdAsync(int id)
+        public async Task<List<Registration>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Registration.Where(x => x.Excluded == false).ToListAsync();
         }
-
-        public Task<Registration> UpdateAsync(Registration registration)
+        public async Task<Registration> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Registration.Where(x => x.Excluded == false && x.Id == id).FirstOrDefaultAsync();
+        }
+        public async Task<Registration> UpdateAsync(Registration registration)
+        {
+            _context.Registration.Update(registration);
+            await _context.SaveChangesAsync();
+            return registration;
         }
     }
 }

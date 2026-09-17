@@ -13,5 +13,7 @@ namespace School.Domain.Entities
         public int ValueNota { get; set; }
         public bool Approved { get; set; }
         public Registration Registration {  get; set; }
+        public DateTime invoiceDate { get; set; }
+        public bool Excluded { get; set; }
     }
 }

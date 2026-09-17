@@ -14,6 +14,6 @@ namespace School.Domain.Entities
         public int CourseId { get; set; }
         public ICollection<Registration> Registrations { get; set; }
         public Course Course { get; set; }
-
+        public bool Excluded { get; set; }
     }
 }
