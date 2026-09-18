@@ -30,7 +30,6 @@ namespace School.Application.Services
                 Description = createdCourse.Description
             };
         }
-
         public async Task<CourseGetDTO> DeleteAsync(int id)
         {
             var deleteCourse = await _courseRepository.GetByIdAsync(id);
@@ -43,7 +42,6 @@ namespace School.Application.Services
                 Description = deleteCourse.Description
             };
         }
-
         public async Task<List<CourseGetDTO>> GetAllAsync()
         {
             var courses = await _courseRepository.GetAllAsync();
@@ -56,7 +54,6 @@ namespace School.Application.Services
             }));
             return CourseGetDTOs;
         }
-
         public async Task<CourseGetDTO> GetByIdAsync(int id)
         {
             var course = await _courseRepository.GetByIdAsync(id);
@@ -69,7 +66,6 @@ namespace School.Application.Services
                 Description = course.Description
             };
         }
-
         public async Task<CourseGetDTO> UpdateAsync(CoursePutDTO coursePutDTO)
         {
             var course = new Course
