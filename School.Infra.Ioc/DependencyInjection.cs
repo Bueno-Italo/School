@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using School.Application.Interfaces;
+using School.Application.Services;
 using School.Domain.Interfaces;
 using School.Infra.Data.Context;
 using School.Infra.Data.Repositories;
@@ -22,6 +24,12 @@ namespace School.Infra.Ioc
             services.AddScoped<INotaRepository, NotaRepository>();
             services.AddScoped<IClassRepository, ClassRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<INotaService, NotaService>();
+            services.AddScoped<IClassService, ClassService>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }

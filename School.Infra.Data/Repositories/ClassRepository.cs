@@ -40,12 +40,12 @@ namespace School.Infra.Data.Repositories
         }
         public async Task<List<Class>> GetAllAsync()
         {
-            return await _context.Class.Where(x => x.Excluded == false).ToListAsync();
+            return await _context.Class.Include(x => x.Course).Where(x => x.Excluded == false).ToListAsync();
         }
 
         public async Task<Class> GetByIdAsync(int id)
         {
-            return await _context.Class.Where(x => x.Excluded == false && x.Id == id).FirstOrDefaultAsync();
+            return await _context.Class.Include(x => x.Course).Where(x => x.Excluded == false && x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Class> UpdateAsync(Class Classes)
