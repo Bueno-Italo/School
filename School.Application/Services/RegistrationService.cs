@@ -13,13 +13,22 @@ namespace School.Application.Services
     public class RegistrationService : IRegistrationService
     {
         private readonly IRegistrationRepository _registrationRepository;
-        public RegistrationService(IRegistrationRepository registrationRepository)
+        private readonly IUserRepository _userRepository;
+        private readonly IClassRepository _classRepository;
+        public RegistrationService(IRegistrationRepository registrationRepository, IUserRepository userRepository, IClassRepository classRepository)
         {
             _registrationRepository = registrationRepository;
+            _userRepository = userRepository;
+            _classRepository = classRepository;
         }
 
         public async Task<RegistrationGetDTO> AddAsync(RegistrationPostDTO registrationPostDTO)
         {
+            if(await _userRepository.GetByIdAsync(registrationPostDTO.UserId) == null)
+                throw new Exception("Usuário não encontrado.");
+            if(await _classRepository.GetByIdAsync(registrationPostDTO.ClassId) == null)
+                throw new Exception("Turma não encontrada.");
+
             var registration = new Registration
             {
                 UserId = registrationPostDTO.UserId,
@@ -34,8 +43,6 @@ namespace School.Application.Services
                 Id = createdRegistration.Id,
                 UserId = createdRegistration.UserId,
                 ClassId = createdRegistration.ClassId,
-
-
                 DateRegistration = createdRegistration.DateRegistration,
                 DataExpiration = createdRegistration.DataExpiration,
                 Active = createdRegistration.Active,
@@ -45,7 +52,7 @@ namespace School.Application.Services
         {
             var deletedRegistration = await _registrationRepository.DeleteAsync(id);
             if(deletedRegistration == null)
-                return null;
+                throw new Exception("Matrícula não encontrada.");
             return new RegistrationGetDTO
             {
                 Id = deletedRegistration.Id,
@@ -85,7 +92,7 @@ namespace School.Application.Services
         {
             var registration = await _registrationRepository.GetByIdAsync(id);
             if (registration == null)
-                return null;
+                throw new Exception("Matrícula não encontrada.");
             return new RegistrationGetDetailDTO
             {
                 Id = registration.Id,
@@ -108,6 +115,11 @@ namespace School.Application.Services
         }
         public async Task<RegistrationGetDTO> UpdateAsync(RegistrationPutDTO registrationPutDTO)
         {
+            if(await _classRepository.GetByIdAsync(registrationPutDTO.ClassId) == null)
+                throw new Exception("Turma não encontrada.");
+            if(await _registrationRepository.GetByIdAsync(registrationPutDTO.Id) == null)
+                throw new Exception("Matrícula não encontrada.");
+
             var registration = new Registration
             {
                 Id = registrationPutDTO.Id,
