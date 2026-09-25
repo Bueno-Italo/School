@@ -22,6 +22,8 @@ namespace School.Application.Services
             byte[] passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userPostDTO.Password));
             byte[] passwordSalt = hmac.Key;
 
+            var existingUser = await _userRepository.ExistUserAsync();
+
             var user = new User
             {
                 Name = userPostDTO.Name,
@@ -29,7 +31,7 @@ namespace School.Application.Services
                 Excluded = false,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Profile = "User"
+                Profile = existingUser ? "User" : "Administrator"
             };
 
             var createdUser = await _userRepository.AddAsync(user);
@@ -38,6 +40,7 @@ namespace School.Application.Services
                 Id = createdUser.Id,
                 Name = createdUser.Name,
                 Email = createdUser.Email,
+                Profile = createdUser.Profile
             };
         }
         public async Task<UserGetDTO> DeleteAsync(int id)
@@ -50,9 +53,16 @@ namespace School.Application.Services
                 Id = deletedUser.Id,
                 Name = deletedUser.Name,
                 Email = deletedUser.Email,
+                Profile = deletedUser.Profile
             };
 
         }
+
+        public async Task<bool> ExistUserAsync()
+        {
+            return await _userRepository.ExistUserAsync();
+        }
+
         public async Task<List<UserGetDTO>> GetAllAsync()
         {
             var users = await _userRepository.GetAllAsync();
@@ -75,6 +85,7 @@ namespace School.Application.Services
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
+                Profile = user.Profile
             };
         }
         public async Task<UserGetDTO> UpdateAsync(int userId, UserPutDTO userPutDTO)
@@ -92,6 +103,7 @@ namespace School.Application.Services
                 Id = updatedUser.Id,
                 Name = updatedUser.Name,
                 Email = updatedUser.Email,
+                Profile = updatedUser.Profile
             };
         }
     }
