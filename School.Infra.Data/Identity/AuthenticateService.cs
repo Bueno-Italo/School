@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using School.Domain.Account;
 using School.Domain.Entities;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,11 +18,27 @@ namespace School.Infra.Data.Identity
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
-
         public AuthenticateService(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
+        }
+
+        public async Task<bool> AuthenticateAsync(string email, string password)
+        {
+           var user = await _context.User.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            if (user == null || user.Excluded)
+                return false;
+
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != user.PasswordHash[i])
+                    return false;
+            }
+
+            return true;
         }
 
         public string GenerateToken(int id, string email, string role)
@@ -47,14 +65,14 @@ namespace School.Infra.Data.Identity
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public Task<User> GetUserByIdEmail(string email)
+        public async Task<User> GetUserByIdEmail(string email)
         {
-            throw new NotImplementedException();
+            return await _context.User.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
         }
 
         public Task<bool> UserExists(string email)
         {
-            throw new NotImplementedException();
+            return _context.User.AnyAsync(u => u.Email.ToLower() == email.ToLower() && u.Excluded == false);
         }
     }
 }
