@@ -39,6 +39,11 @@ namespace School.Infra.Data.Repositories
             return user;
         }
 
+        public async Task<bool> ExistUserAsync()
+        {
+            return await _context.User.AnyAsync(x => x.Excluded == false);
+        }
+
         public async Task<List<User>> GetAllAsync()
         {
             return await _context.User.Where(x => x.Excluded == false).ToListAsync();

@@ -13,5 +13,6 @@ namespace School.Application.Interfaces
         Task<UserGetDTO> AddAsync(UserPostDTO userPostDTO);
         Task<UserGetDTO> UpdateAsync(int userId, UserPutDTO userPutDTO);
         Task<UserGetDTO> DeleteAsync(int id);
+        Task<bool> ExistUserAsync();
     }
 }

@@ -14,12 +14,17 @@ namespace School.Application.Services
     public class NotaService : INotaService
     {
         private readonly INotaRepository _notaRepository;
-        public NotaService(INotaRepository notaRepository)
+        private readonly IRegistrationRepository _registrationRepository;
+        public NotaService(INotaRepository notaRepository, IRegistrationRepository registrationRepository)
         {
             _notaRepository = notaRepository;
+            _registrationRepository = registrationRepository;
         }
         public async Task<NotaGetDTO> AddAsync(NotaPostDTO notaPostDTO)
         {
+            if(await _registrationRepository.GetByIdAsync(notaPostDTO.RegistrationId) == null)
+                throw new Exception("Registration not found");
+            
             var nota = new Nota
             {
                 RegistrationId = notaPostDTO.RegistrationId,
@@ -41,7 +46,8 @@ namespace School.Application.Services
         {
             var deleteNota = await _notaRepository.DeleteAsync(id);
             if (deleteNota == null)
-                return null;
+                throw new Exception("Nota não encontrada.");
+
             return new NotaGetDTO
             {
                 Id = deleteNota.Id,
@@ -72,7 +78,7 @@ namespace School.Application.Services
         {
             var nota = await _notaRepository.GetByIdAsync(id);
             if (nota == null)
-                return null;
+                throw new Exception("Nota não encontrada.");
             return new NotaGetDTO
             {
                 Id = nota.Id,
@@ -86,7 +92,15 @@ namespace School.Application.Services
         {
             var existingNota = await _notaRepository.GetByIdAsync(notaPutDTO.Id);
             if (existingNota == null)
-                return null;
+                throw new Exception("Nota não encontrada.");
+
+            if(notaPutDTO.RegistrationId != existingNota.RegistrationId)
+            {
+                if (await _registrationRepository.GetByIdAsync(notaPutDTO.RegistrationId) == null)
+                    throw new Exception("Registration not found");
+                existingNota.RegistrationId = notaPutDTO.RegistrationId;
+            }
+
             existingNota.ValueNota = notaPutDTO.ValueNota;
             existingNota.Approved = notaPutDTO.ValueNota >= 60;
             var updatedNota = await _notaRepository.UpdateAsync(existingNota);

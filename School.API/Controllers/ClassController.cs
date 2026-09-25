@@ -17,10 +17,6 @@ namespace School.API.Controllers
         public async Task<ActionResult> CreateClass(ClassPostDTO classPostDTO)
         {
             var createdClass = await _classService.AddAsync(classPostDTO);
-            if (createdClass == null)
-            {
-                return BadRequest("Não foi possível criar a turma.");
-            }
             return Ok(new { message = "Turma criada com sucesso." });
         }
 
@@ -28,10 +24,6 @@ namespace School.API.Controllers
         public async Task<ActionResult> UpdateClass(ClassPutDTO classPutDTO)
         {
             var updatedClass = await _classService.UpdateAsync(classPutDTO);
-            if (updatedClass == null)
-            {
-                return BadRequest("Ocorreu um erro ao alterar esta turma.");
-            }
             return Ok(new { message = "Turma atualizada com sucesso." });
         }
 
@@ -39,10 +31,6 @@ namespace School.API.Controllers
         public async Task<ActionResult> DeleteClass(int id)
         {
             var deletedClass = await _classService.DeleteAsync(id);
-            if (deletedClass == null)
-            {
-                return BadRequest("Ocorreu um erro ao excluir esta turma.");
-            }
             return Ok(new { message = "Turma excluída com sucesso." });
         }
 

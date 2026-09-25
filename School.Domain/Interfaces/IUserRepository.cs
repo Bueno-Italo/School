@@ -9,5 +9,6 @@ namespace School.Domain.Interfaces
         Task<User> AddAsync(User user);
         Task<User> UpdateAsync(User user);
         Task<User> DeleteAsync(int id);
+        Task<bool> ExistUserAsync();
     }
 }
