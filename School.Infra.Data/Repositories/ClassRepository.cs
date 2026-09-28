@@ -48,6 +48,14 @@ namespace School.Infra.Data.Repositories
             return await _context.Class.Include(x => x.Course).Where(x => x.Excluded == false && x.Id == id).FirstOrDefaultAsync();
         }
 
+        public async Task<List<Class>> GetClassByUser(int idUser)
+        {
+            return await _context.Class
+                .Include(c => c.Course)
+                .Where(c => c.Excluded == false && c.Registrations.Any(r => r.UserId == idUser))
+                .ToListAsync();
+        }
+
         public async Task<Class> UpdateAsync(Class Classes)
         {
             _context.Class.Update(Classes);

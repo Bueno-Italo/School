@@ -9,5 +9,6 @@ namespace School.Domain.Interfaces
         Task<Class> AddAsync(Class Classes);
         Task<Class> UpdateAsync(Class Classes);
         Task<Class> DeleteAsync(int id);
+        Task<List<Class>> GetClassByUser(int idUser);
     }
 }

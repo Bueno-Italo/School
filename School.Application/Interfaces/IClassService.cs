@@ -1,5 +1,6 @@
 ﻿using School.Application.DTOs.Class;
 using School.Application.DTOs.Nota;
+using School.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,5 +14,6 @@ namespace School.Application.Interfaces
         Task<ClassGetDTO> AddAsync(ClassPostDTO classPostDTO);
         Task<ClassGetDTO> UpdateAsync(ClassPutDTO classPutDTO);
         Task<ClassGetDTO> DeleteAsync(int id);
+        Task<List<ClassGetDetailsDTO>> GetClassByUser(int idUser);
     }
 }

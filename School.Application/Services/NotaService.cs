@@ -30,7 +30,7 @@ namespace School.Application.Services
                 RegistrationId = notaPostDTO.RegistrationId,
                 ValueNota = notaPostDTO.ValueNota,
                 Approved = notaPostDTO.ValueNota >= 60,
-                invoiceDate = DateTime.Now
+                invoiceDate = DateTime.UtcNow
             };
             var createdNota = await _notaRepository.AddAsync(nota);
             return new NotaGetDTO
@@ -87,6 +87,23 @@ namespace School.Application.Services
                 Approved = nota.Approved,
                 invoiceDate = nota.invoiceDate
             };
+        }
+        public async Task<List<NotaGetDTO>> GetNotasByClassUser(int idClass, int idUser)
+        {
+            var notas = await _notaRepository.GetNotasByClassUser(idClass, idUser);
+            var notaDTOs = new List<NotaGetDTO>();
+            foreach (var nota in notas)
+            {
+                notaDTOs.Add(new NotaGetDTO
+                {
+                    Id = nota.Id,
+                    RegistrationId = nota.RegistrationId,
+                    ValueNota = nota.ValueNota,
+                    Approved = nota.Approved,
+                    invoiceDate = nota.invoiceDate
+                });
+            }
+            return notaDTOs;
         }
         public async Task<NotaGetDTO> UpdateAsync(NotaPutDTO notaPutDTO)
         {
