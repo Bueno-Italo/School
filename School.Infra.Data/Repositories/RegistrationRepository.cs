@@ -39,7 +39,7 @@ namespace School.Infra.Data.Repositories
         }
         public async Task<List<Registration>> GetAllAsync()
         {
-            return await _context.Registration.Where(x => x.Excluded == false).ToListAsync();
+            return await _context.Registration.Include(x => x.User).Include(x => x.Class).Where(x => x.Excluded == false).ToListAsync();
         }
         public async Task<Registration> GetByIdAsync(int id)
         {

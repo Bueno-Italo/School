@@ -14,10 +14,12 @@ namespace School.Application.Services
     {
         private readonly IClassRepository _classRepository;
         private readonly ICourseRepository _courseRepository;
-        public ClassService(IClassRepository classRepository, ICourseRepository courseRepository)
+        private readonly IUserRepository _userRepository;
+        public ClassService(IClassRepository classRepository, ICourseRepository courseRepository, IUserRepository userRepository)
         {
             _classRepository = classRepository;
             _courseRepository = courseRepository;
+            _userRepository = userRepository;
         }
         public async Task<ClassGetDTO> AddAsync(ClassPostDTO classPostDTO)
         {
@@ -76,7 +78,7 @@ namespace School.Application.Services
         {
             var newClass = await _classRepository.GetByIdAsync(id);
             if(newClass == null)
-                return null;
+                throw new NotFoundException("Turma não encontrada.");
             return new ClassGetDetailsDTO
             {
                 Id = newClass.Id,
@@ -89,6 +91,29 @@ namespace School.Application.Services
                     Description = newClass.Course.Description
                 }
             };
+        }
+        public async Task<List<ClassGetDetailsDTO>> GetClassByUser(int idUser)
+        {
+            var user = await _userRepository.GetByIdAsync(idUser);
+            if (user == null)
+                throw new NotFoundException("Usuário não encontrado.");
+
+            var classes = await _classRepository.GetClassByUser(idUser);
+            var classGetDetailsDTO = new List<ClassGetDetailsDTO>();
+            classGetDetailsDTO.AddRange(classes.Select(c => new ClassGetDetailsDTO
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description,
+                Course = new CourseGetDTO
+                {
+                    Id = c.Course.Id,
+                    Name = c.Course.Name,
+                    Description = c.Course.Description
+                }
+            }));
+            
+            return classGetDetailsDTO;
         }
         public async Task<ClassGetDTO> UpdateAsync(ClassPutDTO classPutDTO)
         {

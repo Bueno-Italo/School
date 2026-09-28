@@ -30,7 +30,7 @@ namespace School.API.Controllers
                 return BadRequest(new { MessageProcessingHandler = "Já existe um usuário utilizado este e-mail!" });
             var user = await _userService.AddAsync(userPostDTO);
             var token = _authenticate.GenerateToken(user.Id, user.Email.ToLower(), user.Profile);
-            return Ok(new { Nome = user.Name, token = token});
+            return Ok(new { Nome = user.Name, Token = token});
         }
 
         [HttpPost("login")]

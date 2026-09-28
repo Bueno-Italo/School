@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School.Application.DTOs.Registration;
 using School.Application.Interfaces;
 
@@ -6,6 +7,7 @@ namespace School.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Administrator")]
     public class RegistrationController : Controller
     {
         private readonly IRegistrationService _registrationService;

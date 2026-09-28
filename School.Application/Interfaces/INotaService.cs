@@ -13,5 +13,6 @@ namespace School.Application.Interfaces
         Task<NotaGetDTO> AddAsync(NotaPostDTO notaPostDTO);
         Task<NotaGetDTO> UpdateAsync(NotaPutDTO notaPutDTO);
         Task<NotaGetDTO> DeleteAsync(int id);
+        Task<List<NotaGetDTO>> GetNotasByClassUser(int idClass, int idUser);
     }
 }
