@@ -3,6 +3,7 @@ using School.Application.DTOs.Course;
 using School.Application.Interfaces;
 using School.Domain.Entities;
 using School.Domain.Interfaces;
+using School.Domain.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -43,9 +44,9 @@ namespace School.Application.Services
                 Description = deleteCourse.Description
             };
         }
-        public async Task<List<CourseGetDTO>> GetAllAsync()
+        public async Task<PagedList<CourseGetDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var courses = await _courseRepository.GetAllAsync();
+            var courses = await _courseRepository.GetAllAsync(pageNumber, pageSize);
             var CourseGetDTOs = new List<CourseGetDTO>();
             CourseGetDTOs.AddRange(courses.Select(course => new CourseGetDTO
             {
@@ -53,7 +54,7 @@ namespace School.Application.Services
                 Name = course.Name,
                 Description = course.Description
             }));
-            return CourseGetDTOs;
+            return new PagedList<CourseGetDTO>(CourseGetDTOs, courses.CurrentPage, courses.PageSize, courses.TotalCount);
         }
         public async Task<CourseGetDTO> GetByIdAsync(int id)
         {
