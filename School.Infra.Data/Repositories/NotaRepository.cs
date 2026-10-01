@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using School.Domain.Entities;
 using School.Domain.Interfaces;
+using School.Domain.Pagination;
 using School.Infra.Data.Context;
+using School.Infra.Data.Helpers;
 using School.Infra.Data.Repositories;
 using System;
 using System.Collections.Generic;
@@ -38,9 +40,10 @@ namespace School.Infra.Data.Repositories
             return nota;
         }
 
-        public async Task<List<Nota>> GetAllAsync()
+        public async Task<PagedList<Nota>> GetAllAsync(int pagenumber, int pagesize)
         {
-            return await _context.Nota.Where(x => x.Excluded == false).ToListAsync();
+            var query = _context.Nota.Include(x => x.Registration).Where(x => x.Excluded == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pagenumber, pagesize);
         }
 
         public async Task<Nota> GetByIdAsync(int id)
@@ -51,6 +54,14 @@ namespace School.Infra.Data.Repositories
         public async Task<List<Nota>> GetNotasByClassUser(int idClass, int idUser)
         {
             return await _context.Nota.Where(x => x.Excluded == false && x.Registration.ClassId == idClass && x.Registration.UserId == idUser).ToListAsync();
+        }
+
+        public async Task<PagedList<Nota>> GetNotasByClassUser(int idClass, int idUser, int pagenumber, int pagesize)
+        {
+            var query = _context.Nota
+                .Where(x => x.Excluded == false && x.Registration.ClassId == idClass && x.Registration.UserId == idUser)
+                .AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pagenumber, pagesize);
         }
 
         public async Task<Nota> UpdateAsync(Nota nota)

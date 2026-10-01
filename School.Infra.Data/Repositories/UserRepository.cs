@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using School.Domain.Entities;
 using School.Domain.Interfaces;
+using School.Domain.Pagination;
 using School.Infra.Data.Context;
 using School.Infra.Data.Repositories;
 using System;
@@ -44,9 +45,13 @@ namespace School.Infra.Data.Repositories
             return await _context.User.AnyAsync(x => x.Excluded == false);
         }
 
-        public async Task<List<User>> GetAllAsync()
+        public async Task<PagedList<User>> GetAllAsync(int pagenumber, int pagesize)
         {
-            return await _context.User.Where(x => x.Excluded == false).ToListAsync();
+            var query = _context.User.Where(x => x.Excluded == false).AsNoTracking();
+            var users = await query.Skip((pagenumber - 1) * pagesize).Take(pagesize).ToListAsync();
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pagesize);
+            return new PagedList<User>(users, pagenumber, pagesize, totalCount);
         }
 
         public async Task<User> GetByIdAsync(int id)

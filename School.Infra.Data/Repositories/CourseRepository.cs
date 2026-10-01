@@ -2,6 +2,8 @@
 using School.Domain.Interfaces;
 using School.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using School.Domain.Pagination;
+using School.Infra.Data.Helpers;
 
 namespace School.Infra.Data.Repositories
 {
@@ -33,9 +35,10 @@ namespace School.Infra.Data.Repositories
             return course;
         }
 
-        public async Task<List<Course>> GetAllAsync()
+        public async Task<PagedList<Course>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Course.Where(x => x.Excluded == false).ToListAsync();
+           var query = _context.Course.Where(x => x.Excluded == false).AsNoTracking();
+            return await PaginationHelper.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Course> GetByIdAsync(int id)
