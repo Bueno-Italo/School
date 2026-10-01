@@ -11,6 +11,13 @@ namespace School.Domain.Interfaces
         Task<Nota> UpdateAsync(Nota nota);
         Task<Nota> DeleteAsync(int id);
         Task<PagedList<Nota>> GetNotasByClassUser(int idClass, int idUser, int pagenumber, int pagesize);
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         Task<IEnumerable<object>> GetNotasByClassUser(int idClass, int idUser);
+=======
+>>>>>>> Stashed changes
+=======
+        Task<IEnumerable<object>> GetNotasByClassUser(int idClass, int idUser);
+>>>>>>> Stashed changes
     }
-}
+}       
