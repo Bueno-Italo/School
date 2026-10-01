@@ -2,6 +2,7 @@
 using School.Application.Interfaces;
 using School.Domain.Entities;
 using School.Domain.Interfaces;
+using School.Domain.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -63,9 +64,9 @@ namespace School.Application.Services
             return await _userRepository.ExistUserAsync();
         }
 
-        public async Task<List<UserGetDTO>> GetAllAsync()
+        public async Task<PagedList<UserGetDTO>> GetAllAsync(int pagenumber, int pagesize)
         {
-            var users = await _userRepository.GetAllAsync();
+            var users = await _userRepository.GetAllAsync(pagenumber, pagesize);
             var userDTOs = new List<UserGetDTO>();
             userDTOs.AddRange(users.Select(user => new UserGetDTO
             {
@@ -73,7 +74,7 @@ namespace School.Application.Services
                 Name = user.Name,
                 Email = user.Email,
             }));
-            return userDTOs;
+            return new PagedList<UserGetDTO>(userDTOs, users.CurrentPage, users.PageSize, users.TotalCount);
         }
         public async Task<UserGetDTO> GetByIdAsync(int id)
         {

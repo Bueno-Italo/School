@@ -4,6 +4,7 @@ using School.Application.DTOs.User;
 using School.Application.Interfaces;
 using School.Domain.Entities;
 using School.Domain.Interfaces;
+using School.Domain.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,7 +22,6 @@ namespace School.Application.Services
             _userRepository = userRepository;
             _classRepository = classRepository;
         }
-
         public async Task<RegistrationGetDTO> AddAsync(RegistrationPostDTO registrationPostDTO)
         {
             if(await _userRepository.GetByIdAsync(registrationPostDTO.UserId) == null)
@@ -63,11 +63,11 @@ namespace School.Application.Services
                 Active = deletedRegistration.Active,
             };
         }
-        public async Task<List<RegistrationGetDetailDTO>> GetAllAsync()
+        public async Task<PagedList<RegistrationGetDetailDTO>> GetAllAsync(int pagenumber, int pagesize)
         {
-            var registrations = await _registrationRepository.GetAllAsync();
-            var registrationGetDetailDTO = new List<RegistrationGetDetailDTO>();
-            registrationGetDetailDTO.AddRange(registrations.Select(registration => new RegistrationGetDetailDTO
+            var registrations = await _registrationRepository.GetAllAsync(pagenumber, pagesize);
+            //var registrationGetDetailDTO = new List<RegistrationGetDetailDTO>();
+            var registrationGetDetailDTOs = registrations.Select(registration => new RegistrationGetDetailDTO
             {
                 Id = registration.Id,
                 DateRegistration = registration.DateRegistration,
@@ -85,8 +85,8 @@ namespace School.Application.Services
                     Name = registration.Class.Name,
                     Description = registration.Class.Description,
                 }
-            }));
-            return registrationGetDetailDTO;
+            }).ToList();
+            return new PagedList<RegistrationGetDetailDTO>(registrationGetDetailDTOs, registrations.CurrentPage, registrations.PageSize, registrations.TotalCount);
         }
         public async Task<RegistrationGetDetailDTO> GetByIdAsync(int id)
         {
